@@ -36,8 +36,8 @@ sftp:binaries image-sftp
 container: binaries image-container
 
 ifeq ($(PODVM_DISTRO),ubuntu)
-DISTRO_IMAGE := ubuntu:24.04
-DISTRO_RELEASE := 24.04
+DISTRO_IMAGE := ubuntu:26.04
+DISTRO_RELEASE := 26.04
 PKG_INSTALL := apt-get update && apt-get install -y
 else
 DISTRO_IMAGE := fedora:43
