@@ -12,6 +12,7 @@ RUN apt-get update && \
 	bubblewrap \
 	git \
 	cpio \
+	systemd \
 	systemd-repart \
 	kmod \
 	systemd-boot-efi \

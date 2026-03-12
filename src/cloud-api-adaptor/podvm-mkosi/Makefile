@@ -1,7 +1,7 @@
 include ../Makefile.defaults
 
 SE_BOOT   ?= false
-IS_DEBIAN := $(shell if grep -q 'ID_LIKE=debian' /etc/os-release; then echo "true"; else echo "false"; fi)
+IS_DEBIAN := $(shell grep -q 'ID_LIKE=debian' /etc/os-release && echo true || echo false)
 
 REGISTRY ?= quay.io/confidential-containers
 PODVM_DISTRO ?= fedora
@@ -39,10 +39,12 @@ ifeq ($(PODVM_DISTRO),ubuntu)
 DISTRO_IMAGE := ubuntu:26.04
 DISTRO_RELEASE := 26.04
 PKG_INSTALL := apt-get update && apt-get install -y
+MKOSI_HOST_TOOLS := bubblewrap coreutils git python3 systemd
 else
 DISTRO_IMAGE := fedora:43
 DISTRO_RELEASE := 43
 PKG_INSTALL := dnf install -y
+MKOSI_HOST_TOOLS := bubblewrap coreutils git python3 systemd
 endif
 
 define run_mkosi_in_container
@@ -50,7 +52,7 @@ define run_mkosi_in_container
 		-v "$(shell pwd)":/workspace \
 		-w /workspace \
 		$(DISTRO_IMAGE) \
-		bash -c "$(PKG_INSTALL) bubblewrap coreutils git python3; mkdir -p /build; git clone -b $(MKOSI_VERSION) https://github.com/systemd/mkosi /build/mkosi; export PATH="/build/mkosi/bin:$$PATH"; mkosi --tools-tree=default --tools-tree-release=$(DISTRO_RELEASE) $(1)"
+		bash -c "$(PKG_INSTALL) $(MKOSI_HOST_TOOLS); mkdir -p /build; git clone -b $(MKOSI_VERSION) https://github.com/systemd/mkosi /build/mkosi; export PATH="/build/mkosi/bin:$$PATH"; mkosi --tools-tree=default --tools-tree-release=$(DISTRO_RELEASE) $(1)"
 endef
 
 binaries:
